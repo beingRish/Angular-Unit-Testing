@@ -5,14 +5,13 @@ import { Injectable } from '@angular/core';
 })
 export class LoggerService {
 
-  message: string[] = [];
-
-  constructor() {
-    debugger;
-    // logic
-  }
+  messages: string[] = [];
 
   log(message: string) {
-    this.message.push(message);
+    this.messages.push(message);
+  }
+
+  clear() {
+    this.messages = [];
   }
 }
