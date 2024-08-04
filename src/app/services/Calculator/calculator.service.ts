@@ -14,7 +14,7 @@ export class CalculatorService {
     return result
   }
 
-  substract(n1: number, n2: number) {
+  subtract(n1: number, n2: number) {
     let result = n1 - n2;
     this.loggerService.log('Subtract Operation is called');
     return result;
