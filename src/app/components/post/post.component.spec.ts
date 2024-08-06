@@ -6,16 +6,13 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { By } from "@angular/platform-browser";
 
 describe('Post Component', () => {
-
     let fixture: ComponentFixture<PostComponent>;
     let comp: PostComponent
-
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [PostComponent],
             imports: [RouterTestingModule],
         });
-
         fixture = TestBed.createComponent(PostComponent);
         comp = fixture.componentInstance;
     })
@@ -42,16 +39,12 @@ describe('Post Component', () => {
         expect(aElement?.textContent).toContain(post.title);
     })
 
-
     it('should raise an event when the delete post is clicked', () => {
-        
         const post: Post = {id: 1, body: 'body 1', title: 'dsdsd'}
         comp.post = post;
-
         comp.delete.pipe(first()).subscribe(selectedPost => {
             expect(selectedPost).toEqual(post);
         });
-
         comp.onDeletePost(new MouseEvent('click'));
     })
 })
