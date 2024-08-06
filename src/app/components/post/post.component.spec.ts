@@ -2,6 +2,7 @@ import { Post } from "src/app/models/Post.model";
 import { PostComponent } from "./post.component"
 import { first } from "rxjs";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe('Post Component', () => {
 
@@ -11,6 +12,7 @@ describe('Post Component', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [PostComponent],
+            imports: [RouterTestingModule],
         });
 
         fixture = TestBed.createComponent(PostComponent);
@@ -19,6 +21,15 @@ describe('Post Component', () => {
 
     it('should create post component using TestBed', () => {
         expect(comp).toBeDefined();
+    })
+
+    it('should render the post title in the anchor element', () => {
+        const post: Post = {id: 1, body: 'body 1', title: 'title 1'}
+        comp.post = post;
+        fixture.detectChanges();
+        const postElement: HTMLElement = fixture.nativeElement;
+        const a = postElement.querySelector('a')
+        expect(a?.textContent).toContain(post.title);
     })
 
 
