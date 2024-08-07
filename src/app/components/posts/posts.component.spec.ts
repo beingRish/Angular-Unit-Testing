@@ -3,23 +3,15 @@ import { PostsComponent } from "./posts.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { PostService } from "src/app/services/Post/post.service";
 import { of } from "rxjs";
-import { Component, Input } from "@angular/core";
 import { By } from "@angular/platform-browser";
+import { PostComponent } from "../post/post.component";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe('Posts Component', () => {
     let POSTS: Post[];
     let component: PostsComponent;
     let mockPostService: any;
     let fixture: ComponentFixture<PostsComponent>
-
-    @Component({
-        selector: 'app-post',
-        template: '<div></div>'
-    })
-
-    class FakePostComponent {
-        @Input() post!: Post;
-    }
 
     beforeEach(() => {
         POSTS = [
@@ -43,8 +35,9 @@ describe('Posts Component', () => {
         TestBed.configureTestingModule({
             declarations: [
                 PostsComponent,
-                FakePostComponent
+                PostComponent
             ],
+            imports: [RouterTestingModule],
             providers: [
                 {
                     provide: PostService, 
@@ -55,6 +48,17 @@ describe('Posts Component', () => {
         fixture = TestBed.createComponent(PostsComponent)
         component = fixture.componentInstance
     });
+
+    it('should create exact same number of Post Component with Posts', () => {
+        mockPostService.getPosts.and.returnValue(of(POSTS));
+        // ngOnInit();
+        fixture.detectChanges();
+        const PostComponentDEs = fixture.debugElement.queryAll(
+            By.directive(PostComponent)
+        );
+
+        expect(PostComponentDEs.length).toEqual(POSTS.length);
+    })
 
     it('should set posts from the service directly', () => {
         mockPostService.getPosts.and.returnValue(of(POSTS));
