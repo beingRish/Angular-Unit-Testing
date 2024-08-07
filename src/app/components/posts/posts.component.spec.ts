@@ -3,13 +3,23 @@ import { PostsComponent } from "./posts.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { PostService } from "src/app/services/Post/post.service";
 import { of } from "rxjs";
-import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { Component, Input } from "@angular/core";
+import { By } from "@angular/platform-browser";
 
 describe('Posts Component', () => {
     let POSTS: Post[];
     let component: PostsComponent;
     let mockPostService: any;
     let fixture: ComponentFixture<PostsComponent>
+
+    @Component({
+        selector: 'app-post',
+        template: '<div></div>'
+    })
+
+    class FakePostComponent {
+        @Input() post!: Post;
+    }
 
     beforeEach(() => {
         POSTS = [
@@ -32,7 +42,8 @@ describe('Posts Component', () => {
         mockPostService = jasmine.createSpyObj(['getPosts', 'deletePost'])
         TestBed.configureTestingModule({
             declarations: [
-                PostsComponent
+                PostsComponent,
+                FakePostComponent
             ],
             providers: [
                 {
@@ -40,7 +51,6 @@ describe('Posts Component', () => {
                     useValue: mockPostService
                 },
             ],
-            schemas: [NO_ERRORS_SCHEMA]
         })
         fixture = TestBed.createComponent(PostsComponent)
         component = fixture.componentInstance
@@ -50,6 +60,14 @@ describe('Posts Component', () => {
         mockPostService.getPosts.and.returnValue(of(POSTS));
         fixture.detectChanges();
         expect(component.posts.length).toBe(3);
+    })
+
+    it('should create one post child Element for each post', () => {
+        mockPostService.getPosts.and.returnValue(of(POSTS));
+        fixture.detectChanges();
+        const debugElement = fixture.debugElement;
+        const postsElement = debugElement.queryAll(By.css('.posts'));
+        expect(postsElement.length).toBe(POSTS.length)
     })
 
     describe('delete', () => {
