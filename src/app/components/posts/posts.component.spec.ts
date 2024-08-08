@@ -40,7 +40,7 @@ describe('Posts Component', () => {
             imports: [RouterTestingModule],
             providers: [
                 {
-                    provide: PostService, 
+                    provide: PostService,
                     useValue: mockPostService
                 },
             ],
@@ -63,8 +63,8 @@ describe('Posts Component', () => {
         mockPostService.getPosts.and.returnValue(of(POSTS));
         fixture.detectChanges();
         const postComponentDEs = fixture.debugElement.queryAll(By.directive(PostComponent))
-        
-        for(let i = 0; i < postComponentDEs.length; i++){
+
+        for (let i = 0; i < postComponentDEs.length; i++) {
             let postComponentInstance = postComponentDEs[i].componentInstance as PostComponent;
             expect(postComponentInstance.post.title).toEqual(POSTS[i].title);
         }
@@ -97,7 +97,7 @@ describe('Posts Component', () => {
 
         it('should delete the actual selected Post in Posts', () => {
             component.delete(POSTS[1]);
-            for(let post of component.posts) {
+            for (let post of component.posts) {
                 expect(post).not.toEqual(POSTS[1]);
             }
         })
@@ -108,19 +108,34 @@ describe('Posts Component', () => {
         })
 
         it('should call delete method when post component button is clicked', () => {
-            spyOn(component, 'delete')
+            spyOn(component, 'delete').and.callThrough();
             mockPostService.getPosts.and.returnValue(of(POSTS));
             fixture.detectChanges();
 
             let postComponentDEs = fixture.debugElement.queryAll(
                 By.directive(PostComponent)
             );
-            for(let i = 0; i < postComponentDEs.length; i++){
-                postComponentDEs[i]
+
+            postComponentDEs.forEach((postComponentDE, i) => {
+                const event = new Event('click');
+                postComponentDE
                     .query(By.css('button'))
-                    .triggerEventHandler('click', { preventDefault: () => {} });
+                    .triggerEventHandler('click', event);
                 expect(component.delete).toHaveBeenCalledWith(POSTS[i]);
-            }
+            })
+        })
+
+        it('should call the delete method when the delete event is emitted in Post Component', () => {
+            spyOn(component, 'delete');
+            mockPostService.getPosts.and.returnValue(of(POSTS));
+            fixture.detectChanges();
+
+            let postComponentDEs = fixture.debugElement.queryAll(By.directive(PostComponent));
+
+            postComponentDEs.forEach((postComponentDE, i) => {
+                (postComponentDE.componentInstance as PostComponent).delete.emit(POSTS[0])
+                expect(component.delete).toHaveBeenCalledWith(POSTS[0])
+            })
         })
     })
 })
